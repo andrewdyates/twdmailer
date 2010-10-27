@@ -1,0 +1,13 @@
+# Copyright © 2010 Andrew D. Yates
+# https://github.com/andrewdyates/twdmailer
+
+application: twdmailer
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+
+- url: /
+  script: index.py
+  
