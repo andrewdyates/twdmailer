@@ -8,14 +8,36 @@ api_version: 1
 
 handlers:
 
+# Authentication
 - url: /_ah/login_required
   script: do_openid_login.py
-
 - url: /logged_out
   script: logged_out.py
-  
-- url: /.*
-  script: main.py
-  login: required
-  
 
+# Super
+- url: /super/?.*
+  script: super.py
+  login: admin
+  
+# Admin
+- url: /admin/?.*
+  script: admin.py
+  login: required
+
+# User
+- url: /user/?.*
+  script: user.py
+  login: required
+
+# Submission
+- url: /submit/?.*
+  script: submit.py
+
+# Home
+- url: /
+  script: main.py
+
+# Cron Automated Jobs, see cron.yaml
+- url: /cron/?.*
+  login: admin
+  script: cron.py

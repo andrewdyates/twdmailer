@@ -1,0 +1,6 @@
+# Copyright © 2010 Andrew D. Yates
+
+cron:
+- description: daily automated mailer
+  url: /cron/mailer
+  schedule: every day 09:00
