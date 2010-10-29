@@ -8,6 +8,14 @@ api_version: 1
 
 handlers:
 
-- url: /
-  script: index.py
+- url: /_ah/login_required
+  script: do_openid_login.py
+
+- url: /logged_out
+  script: logged_out.py
   
+- url: /.*
+  script: main.py
+  login: required
+  
+
