@@ -14,10 +14,9 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 class MainPage(webapp.RequestHandler):
   def get(self):
     _w = self.response.out.write
-    self.response.headers['Content-Type'] = 'text/plain'
-    _w('Admin.\n')
+    _w('<html><head><title>Toledo Web Design Mailer: Admin</title></head><body>')
     _w('List User Pages.\n')
-    _w('Create New User.\n')
+    _w('</body></html>')
 
     
 app = webapp.WSGIApplication([

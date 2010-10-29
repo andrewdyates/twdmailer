@@ -6,8 +6,7 @@ from google.appengine.ext import db
 
 class Account(db.Model):
   """Authenticated login like clients and admins."""
-  name = db.StringProperty()
-  email = db.UserProperty(required=True)
+  user = db.UserProperty(required=True)
   date_created = db.DateTimeProperty(auto_now_add=True)
   date_updated = db.DateTimeProperty(auto_now=True)
   is_active = db.BooleanProperty(default=True)
@@ -38,6 +37,7 @@ class Lead(db.Expando):
 
 class Attachment(db.Model):
   """An email attachment file."""
+  # assign default user value?
   account = db.ReferenceProperty(Account, required=True)
   data = db.BlobProperty(required=True)
   filename = db.StringProperty(required=True)
@@ -46,6 +46,7 @@ class Attachment(db.Model):
   
 class EmailMessage(db.Model):
   """A stock automated email message."""
+  # assign default user value?
   account = db.ReferenceProperty(Account)
   sequence_num = db.IntegerProperty()
   is_default = db.BooleanProperty(default=False)

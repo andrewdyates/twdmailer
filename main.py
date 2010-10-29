@@ -13,6 +13,7 @@ class MainPage(webapp.RequestHandler):
     _w = self.response.out.write
     self.response.headers['Content-Type'] = 'text/plain'
     _w('Hello, webapp World!\n')
+    _w('User: %s\n' % users.get_current_user())
     _w("logout: " + users.create_logout_url('/no') + "\n")
     _w("login: " + users.create_login_url('/') + "\n")
     user = users.get_current_user()
