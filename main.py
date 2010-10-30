@@ -5,54 +5,30 @@ import os
 
 from google.appengine.api import users
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-import models
 
+TMPL_PATH = os.path.join(os.path.dirname(__file__), 'templates/')
 
-class MainPage(webapp.RequestHandler):
+class Main(webapp.RequestHandler):
   
   def get(self):
     _w = self.response.out.write
-    self.response.headers['Content-Type'] = 'text/plain'
-    _w('Hello, webapp World!\n')
-    _w('User: %s\n' % users.get_current_user())
-    _w("logout: " + users.create_logout_url('/no') + "\n")
-    _w("login: " + users.create_login_url('/') + "\n")
     user = users.get_current_user()
 
-    if user:
-      _w("user.nickname(): %s\n" % user.nickname())
-      _w("user.email(): %s\n" % user.email())
-      _w("user.user_id(): %s\n" % user.user_id())
-      _w("user.federated_identity(): %s\n" % user.federated_identity())
-      _w("user.federated_provider(): %s\n" % user.federated_provider())
-      _w("is_current_user_admin(): %s\n" % users.is_current_user_admin())
-      
-      _w("\n\nTry DB selection\n===\n")
-      query = models.Account.all().filter("user =", user)
-      account = query.get()
-      if account:
-        _w(account.to_xml())
-        _w("user.nickname(): %s\n" % account.user.nickname())
-        _w("user.email(): %s\n" % account.user.email())
-        _w("user.user_id(): %s\n" % account.user.user_id())
-        _w("user.federated_identity(): %s\n" % account.user.federated_identity())
-        _w("user.federated_provider(): %s\n" % account.user.federated_provider())
-      else:
-        _w("Account Mismatch for %s.\n" % user)
-        
-    else:
-      _w("No User Login")
-
-    _w('\n===\n')
-
-    for k, v in os.environ.items():
-      _w("%s = %s\n" % (k, v))
+    auth = {
+      'user': user,
+      'login_url': users.create_login_url(os.environ['PATH_INFO']),
+      'logout_url': users.create_logout_url('/logged_out'),
+      }
+    title = "Toledo Web Design Mailer"
+    content = "<h1>Home Page</h1>"
+    _w(template.render(TMPL_PATH + "base.html", locals()))
 
     
 app = webapp.WSGIApplication([
-    (r'/', MainPage),
+    (r'/', Main),
     ], debug=True)
 
 def main():

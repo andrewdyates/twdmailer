@@ -3,8 +3,22 @@
     <title>{% block title %}Toledo Web Design Mailer: {{ title }}{% endblock %}</title>
   </head>
   <body>
-{% block body %}
-{{ content }}
-{% endblock %}
+
+  {% block auth %}
+    {% if auth %}
+    <div id="UserStatusBar">
+      {% if auth.user %}
+        User: {{ auth.user.nickname }} | <a href="{{ auth.logout_url }}">Logout</a>
+      {% else %}
+        <a href="{{ auth.login_url }}">Login</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% endblock %}
+      
+  {% block body %}
+    {{ content }}
+  {% endblock %}
+
   </body>
 </html>

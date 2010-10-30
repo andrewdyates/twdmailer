@@ -1,15 +1,9 @@
 {% extends "base.html" %}
 
 {% block body %}
-{% if message %}
-<div class="message">{{ message }}</div>
+<h1>Bootstrap Superuser to Admin Account</h1>
+{% if msg %}
+<div class="message">{{ msg }}</div>
 {% endif %}
-<h1>Superuser Control</h1>
-<p>Promote an existing user to admin status.</p>
-
-<form action="" method="post">
-  <label for="id_email">User Account Email:</label>
-  <input id="id_email" type="text" name="email" value="{{ email }}" size="50" />
-  <input type="submit" name="Make Admin" />
-</form>
+<p><a href="/">Back to Homepage</a></p>
 {% endblock %}

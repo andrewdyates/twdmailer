@@ -1,9 +1,9 @@
 #!/usr/bin/python2.5
 # -*- coding: utf-8 -*-
 # Copyright © 2010 Andrew D. Yates
-"""Super: Create Admin Accounts.
+"""Super: Bootstrap application by adding current user as an Account
+with admin access.
 """
-
 import os
 
 from google.appengine.api import users
@@ -14,48 +14,42 @@ from google.appengine.ext import db
 
 import models
 
+PATH = os.path.join(os.path.dirname(__file__), 'templates/super.html')
+
+
+def add_su_account():
+  """Add logged-in (super) user as an admin Account."""
+  user = users.get_current_user()
+  # check to see if user already exists
+  if models.Account.all().filter("user =", user).get():
+    raise ValueError("Account for user %s already exists.")
+  su = models.Account(
+    title = user.nickname(),
+    action_path = user.nickname(),
+    user = user,
+    is_admin = True,
+    )
+  su.put()
+  return su
   
-class MainPage(webapp.RequestHandler):
-  """Print admin promotion form."""
-
+class Main(webapp.RequestHandler):
   def get(self, message=None):
-    """Print admin promotion form."""
     _w = self.response.out.write
-    path = os.path.join(os.path.dirname(__file__), 'templates/super.html')
-    user = users.get_current_user()
-    email = user.email()
-    _w(template.render(path, locals()))
-
-  def post(self):
-    """Create or update Account with admin status."""
-    email = self.request.get("email")
-    user = users.User(email=email)
-    query = models.Account.all().filter("user =", user)
-    account = query.get()
-
-    if not account:
-      try:
-        account = models.Account(user=user, is_admin=True)
-      except db.BadValueError, e:
-        msg = "ERROR: %s" % e
-      else:
-        account.put()
-        msg = "Account %s created as admin." % email
+    try:
+      su = add_su_account()
+    except ValueError, e:
+      msg = "ERROR: %s" % e
     else:
-      if account.is_admin:
-        msg = "Account %s is already an admin." % email
-      else:
-        Account.is_admin = True
-        account.put()
-    self.get(message=msg)
+      msg = "SUCCESS: Admin Account for user %s created." % su
+    _w(template.render(PATH, {'msg': msg, 'user': users.get_current_user()}))
 
     
 app = webapp.WSGIApplication([
-    (r'.*', MainPage),
+    (r'.*', Main),
     ], debug=True)
 
 def main():
   run_wsgi_app(app)
-
+  
 if __name__ == '__main__':
   main()

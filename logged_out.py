@@ -11,8 +11,8 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 class MainPage(webapp.RequestHandler):
   def get(self):
     _w = self.response.out.write
-    self.response.headers['Content-Type'] = 'text/plain'
-    _w('You have been logged out.\n')
+    _w('<p>You have been logged out.</p>')
+    _w('<p><a href="/">Main Page</a></p>')
 
     
 app = webapp.WSGIApplication([

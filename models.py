@@ -6,7 +6,7 @@ from google.appengine.ext import db
 
 class Account(db.Model):
   """Authenticated login like clients and admins."""
-  full_name = db.StringProperty()
+  title = db.StringProperty()
   action_path = db.StringProperty()
   user = db.UserProperty(required=True)
   date_created = db.DateTimeProperty(auto_now_add=True)
