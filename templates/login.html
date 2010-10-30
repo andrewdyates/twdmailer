@@ -1,12 +1,17 @@
 {% extends "base.html" %}
 
+{% block auth %}
+{% endblock %}
+
 {% block body %}
   <h1>Log in with OpenID</h1>
   <form method="get" action="/_ah/login_required">
-    {% if continue %}
-    <input type="text" name="continue" value="{{continue|escape}}" />
+    {% if continue_url %}
+    Continue to:
+    <input type="text" name="continue" value="{{ continue_url|escape }}" size="50" /></br />
     {% endif %}
-    <input type="text" name="openid" value="{{ default_openid_url }}" />
+    OpenID Domain:
+    <input type="text" name="openid" value="{{ openid_url|default:default_openid_url|escape }}" size="50" /><br />
     <input type="submit" value="Log In" />
   </form>
 {% endblock %}

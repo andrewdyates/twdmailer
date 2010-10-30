@@ -20,7 +20,8 @@ class MainPage(webapp.RequestHandler):
   def get(self):
     _w = self.response.out.write
     self.response.headers['Content-Type'] = 'text/plain'
-    _w('User.\n')
+    user = users.get_current_user()
+    _w('Hello User %s.\n' % user)
 
 class LeadPage(webapp.RequestHandler):
   def get(self, lead):
@@ -30,7 +31,7 @@ class LeadPage(webapp.RequestHandler):
 
     
 app = webapp.WSGIApplication([
-    (r'/user/', MainPage),
+    (r'/user/?', MainPage),
     (r'/user/lead/(.+)/?', LeadPage),
     ], debug=True)
 
