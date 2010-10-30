@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block body %}
+<form action="/submit/test" method="post">
+<label for="id_email">email</label>
+<input type="text" name="email" id="id_email" value="" /><br />
+<label for="id_first_name">first_name</label>
+<input type="text" name="first_name" id="id_first_name" value="" /><br />
+<label for="id_last_name">last_name</label>
+<input type="text" name="last_name" id="id_last_name" value="" /><br />
+<label for="id_phone_number">phone_number</label>
+<input type="text" name="phone_number" id="id_phone_number" value="" /><br />
+<label for="id_postal_address">postal_address</label>
+<input type="text" name="postal_address" id="id_postal_address" value="" /><br />
+<input type="submit" value="Submit" />
+</form>
+{% endblock %}

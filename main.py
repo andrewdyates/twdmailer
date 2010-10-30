@@ -7,6 +7,8 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 
+import models
+
 
 class MainPage(webapp.RequestHandler):
   
@@ -18,6 +20,7 @@ class MainPage(webapp.RequestHandler):
     _w("logout: " + users.create_logout_url('/no') + "\n")
     _w("login: " + users.create_login_url('/') + "\n")
     user = users.get_current_user()
+
     if user:
       _w("user.nickname(): %s\n" % user.nickname())
       _w("user.email(): %s\n" % user.email())
@@ -25,6 +28,20 @@ class MainPage(webapp.RequestHandler):
       _w("user.federated_identity(): %s\n" % user.federated_identity())
       _w("user.federated_provider(): %s\n" % user.federated_provider())
       _w("is_current_user_admin(): %s\n" % users.is_current_user_admin())
+      
+      _w("\n\nTry DB selection\n===\n")
+      query = models.Account.all().filter("user =", user)
+      account = query.get()
+      if account:
+        _w(account.to_xml())
+        _w("user.nickname(): %s\n" % account.user.nickname())
+        _w("user.email(): %s\n" % account.user.email())
+        _w("user.user_id(): %s\n" % account.user.user_id())
+        _w("user.federated_identity(): %s\n" % account.user.federated_identity())
+        _w("user.federated_provider(): %s\n" % account.user.federated_provider())
+      else:
+        _w("Account Mismatch for %s.\n" % user)
+        
     else:
       _w("No User Login")
 

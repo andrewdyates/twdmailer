@@ -22,6 +22,8 @@ class MainPage(webapp.RequestHandler):
     """Print admin promotion form."""
     _w = self.response.out.write
     path = os.path.join(os.path.dirname(__file__), 'templates/super.html')
+    user = users.get_current_user()
+    email = user.email()
     _w(template.render(path, locals()))
 
   def post(self):

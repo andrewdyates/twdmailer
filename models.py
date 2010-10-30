@@ -6,6 +6,7 @@ from google.appengine.ext import db
 
 class Account(db.Model):
   """Authenticated login like clients and admins."""
+  full_name = db.StringProperty()
   action_path = db.StringProperty()
   user = db.UserProperty(required=True)
   date_created = db.DateTimeProperty(auto_now_add=True)
@@ -14,7 +15,7 @@ class Account(db.Model):
   is_admin = db.BooleanProperty(default=False)
 
 
-class Lead(db.Expando):
+class Lead(db.Model):
   """Submitted user contact information."""
   email = db.EmailProperty()
   account = db.ReferenceProperty(Account, required=True)
