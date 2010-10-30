@@ -1,0 +1,11 @@
+This is the Automated Lead Mailer application reminding you to mail a
+hard copy of your financial report to the following new lead:
+
+Name: lead.first_name lead.last_name
+
+Address: lead.postal_address
+
+Phone: lead.phone_number
+
+Email: lead.email
+

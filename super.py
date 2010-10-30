@@ -30,22 +30,22 @@ class MainPage(webapp.RequestHandler):
     user = users.User(email=email)
     query = models.Account.all().filter("user =", user)
     account = query.get()
-    
+
     if not account:
       try:
         account = models.Account(user=user, is_admin=True)
       except db.BadValueError, e:
-        self.get(message="Error: %s" % e)
+        msg = "ERROR: %s" % e
       else:
         account.put()
-        self.get(message="Account %s created as admin." % email)
+        msg = "Account %s created as admin." % email
     else:
       if account.is_admin:
-        self.get(message="Account %s is already an admin." % email)
+        msg = "Account %s is already an admin." % email
       else:
         Account.is_admin = True
         account.put()
-        self.get(message="Account %s is now an admin." % email)
+    self.get(message=msg)
 
     
 app = webapp.WSGIApplication([

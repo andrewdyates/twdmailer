@@ -9,6 +9,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 
 class MainPage(webapp.RequestHandler):
+  
   def get(self):
     _w = self.response.out.write
     self.response.headers['Content-Type'] = 'text/plain'
@@ -34,7 +35,7 @@ class MainPage(webapp.RequestHandler):
 
     
 app = webapp.WSGIApplication([
-    (r'.*', MainPage),
+    (r'/', MainPage),
     ], debug=True)
 
 def main():

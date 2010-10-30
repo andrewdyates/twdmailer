@@ -41,3 +41,8 @@ handlers:
 - url: /cron/?.*
   login: admin
   script: cron.py
+
+# Developer Testing
+- url: /test/?.*
+  login: admin
+  script: test.py

@@ -6,6 +6,7 @@ from google.appengine.ext import db
 
 class Account(db.Model):
   """Authenticated login like clients and admins."""
+  action_path = db.StringProperty()
   user = db.UserProperty(required=True)
   date_created = db.DateTimeProperty(auto_now_add=True)
   date_updated = db.DateTimeProperty(auto_now=True)
@@ -15,7 +16,7 @@ class Account(db.Model):
 
 class Lead(db.Expando):
   """Submitted user contact information."""
-  email = db.EmailProperty(required=True)
+  email = db.EmailProperty()
   account = db.ReferenceProperty(Account, required=True)
   first_name = db.StringProperty()
   last_name = db.StringProperty()
@@ -48,8 +49,7 @@ class EmailMessage(db.Model):
   """A stock automated email message."""
   # assign default user value?
   account = db.ReferenceProperty(Account)
-  sequence_num = db.IntegerProperty()
-  is_default = db.BooleanProperty(default=False)
+  sequence_num = db.IntegerProperty(default=0)
   reply_to = db.EmailProperty()
   subject = db.StringProperty(default="Follow Up")
   attachment = db.ReferenceProperty(Attachment)
