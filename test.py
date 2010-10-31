@@ -21,7 +21,6 @@ class Main(webapp.RequestHandler):
     _w(template.render(TMLT_PATH + "/test_form.html", {}))
 
 
-
 app = webapp.WSGIApplication([
     (r'.*', Main),
     ], debug=True)
