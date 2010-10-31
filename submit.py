@@ -19,12 +19,21 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 import models
 
 
+# WARNING: "From" email must be authorized sender
+# See: http://code.google.com/appengine/docs/python/mail/sendingmail.html
+BOT_EMAIL = "mailer@twdmailer.appspotmail.com"
 TMPL_PATH = os.path.join(os.path.dirname(__file__), 'templates/')
 
 class Main(webapp.RequestHandler):
 
   def post(self, action_path):
-    logging.info("New Lead; email: %s" % self.request.get("email", None))
+
+    lead_email = self.request.get("email", None)
+    # TODO: maybe do some email format checking here
+    if lead_email:
+      logging.info("New Lead Submission: %s" % lead_email)
+    else:
+      logging.warning("No email for lead submission.")
 
     action_path = urllib.unquote(action_path)
     account = models.Account.all().filter("action_path =", action_path).get()
@@ -35,41 +44,46 @@ class Main(webapp.RequestHandler):
     for key in self.request.arguments():
       value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
       lead_ctx[str(key)] = value or None
-    lead_ctx['account'] = account
-
-    lead = models.Lead(**lead_ctx)
+    # note: email is required property
+    lead = models.Lead(account=account, **lead_ctx)
     lead.put()
 
-    # START HERE TO DEBUG
-
+    # TODO: do not repeat submission for duplicate email submission
+    # TODO: throttle emails sent per IP
+ 
     # email account
     account_email_body = template.render(
       TMPL_PATH + "/new_lead_email.txt",
-      {'lead': lead},
+      {'lead_ctx': lead_ctx},
       )
-    mail.send_mail(**{
-        'to': account.user.email(),
-        'subject': 'Mail Hard Copy to New Lead',
-        'body': account_email_body,
-        })
+
+    mail.send_mail(
+      sender=BOT_EMAIL,
+      to=account.user.email(),
+      subject='Mail Hard Copy to New Lead',
+      body=account_email_body,
+      )
     
     # email lead with attachment
-    # should pull from db for account
+    # NOTE: should pull from db for account
     lead_email_body = template.render(
       TMPL_PATH + "/default_response_email.txt",
       {'lead': lead},
       )
     # should pull from db for account
-    attachment = ("sample.pdf", open(TEMPLATE_DIR + "/sample.pdf").read())
-    mail.send_mail(**{
-        'to': lead.email,
-        'reply_to': account.user.email(),
-        'subject': 'Inquiry Response',
-        'body': lead_email_body,
-        'attachments': [attachment]
-        })
+    attachment = ("sample.pdf", open(TMPL_PATH + "/sample.pdf").read())
+    mail.send_mail(
+      sender=BOT_EMAIL,
+      to=lead.email,
+      reply_to=account.user.email(),
+      subject='Inquiry Response',
+      body=lead_email_body,
+      attachments=[attachment],
+      )
+    
     # display confirmation page, include back link
-    self.response.out.write("Thank you for your inquiry, %s." % lead.first_name)
+    # this message should also be from financial advisor
+    self.response.out.write("Thank you for your inquiry.")
 
     
 app = webapp.WSGIApplication([

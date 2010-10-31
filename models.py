@@ -18,7 +18,7 @@ class Account(db.Model):
 
 class Lead(polymodel.PolyModel):
   """Submitted user contact information."""
-  email = db.EmailProperty()
+  email = db.EmailProperty(required=True)
   account = db.ReferenceProperty(Account, required=True)
   first_name = db.StringProperty()
   last_name = db.StringProperty()
@@ -26,7 +26,10 @@ class Lead(polymodel.PolyModel):
   date_updated = db.DateTimeProperty(auto_now=True)
   date_deleted = db.DateTimeProperty()
 
+  
+class LeadStatus(db.Model):
   # lead status
+  lead = db.ReferenceProperty()
   date_hard_copy_mailed = db.DateTimeProperty()
   date_suspend_auto_mailer = db.DateTimeProperty()
   date_closed = db.DateTimeProperty()
