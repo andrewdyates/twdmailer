@@ -40,7 +40,7 @@ class Main(webapp.RequestHandler):
     except ValueError, e:
       msg = "ERROR: %s" % e
     else:
-      msg = "SUCCESS: Admin Account for user %s created." % su
+      msg = "SUCCESS: Admin Account '%s' created." % su.title
     _w(template.render(PATH, {'msg': msg, 'user': users.get_current_user()}))
 
     

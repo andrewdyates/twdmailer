@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-<form action="/submit/test" method="post">
+<form action="/submit/{{ action_path }}" method="post">
 <label for="id_email">email</label>
 <input type="text" name="email" id="id_email" value="" /><br />
 <label for="id_first_name">first_name</label>

@@ -6,6 +6,7 @@
 * Assign to Account based on url
 """
 import cgi
+import urllib
 import logging
 import os
 
@@ -17,25 +18,26 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 
 import models
 
-TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 
+TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
 
 class Main(webapp.RequestHandler):
 
   def post(self, action_path):
     logging.info("New Lead; email: %s" % self.request.get("email", None))
-    
+
+    action_path = urllib.unquote(action_path)
     account = models.Account.all().filter("action_path =", action_path).get()
     if not account:
-      raise ValueError("Invalid Account Action Path '%s'" % account)
+      raise ValueError("Invalid Account Action Path '%s'" % action_path)
     
     lead = models.Lead(**{
         'account': account,
-        'email': cgi.escape(self.request.get('email', '')),
-        'first_name': cgi.escape(self.request.get('first_name', '')),
-        'last_name': cgi.escape(self.request.get('last_name', '')),
-        'phone_number': cgi.escape(self.request.get('phone_number', '')),
-        'postal_address': cgi.escape(self.request.get('postal_address', '')),
+        'email': cgi.escape(self.request.get('email')),
+        'first_name': cgi.escape(self.request.get('first_name')),
+        'last_name': cgi.escape(self.request.get('last_name')),
+        'phone_number': cgi.escape(self.request.get('phone_number')),
+        'postal_address': cgi.escape(self.request.get('postal_address')),
         })
     lead.put()
 
@@ -72,9 +74,9 @@ class Main(webapp.RequestHandler):
 
 
     
-# ===============
+
 app = webapp.WSGIApplication([
-    (r'/submit/(.+)/?', Main),
+    (r'/submit/(.+?)/?', Main),
     ], debug=True)
 
 def main():
