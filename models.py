@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from google.appengine.ext import db
+from google.appengine.ext.db import polymodel
 
 
 class Account(db.Model):
@@ -15,14 +16,12 @@ class Account(db.Model):
   is_admin = db.BooleanProperty(default=False)
 
 
-class Lead(db.Model):
+class Lead(polymodel.PolyModel):
   """Submitted user contact information."""
   email = db.EmailProperty()
   account = db.ReferenceProperty(Account, required=True)
   first_name = db.StringProperty()
   last_name = db.StringProperty()
-  phone_number = db.PhoneNumberProperty()
-  postal_address = db.PostalAddressProperty()
   date_created = db.DateTimeProperty(auto_now_add=True)
   date_updated = db.DateTimeProperty(auto_now=True)
   date_deleted = db.DateTimeProperty()

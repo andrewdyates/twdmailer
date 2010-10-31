@@ -19,7 +19,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 import models
 
 
-TEMPLATE_DIR = os.path.join(os.path.dirname(__file__), 'templates')
+TMPL_PATH = os.path.join(os.path.dirname(__file__), 'templates/')
 
 class Main(webapp.RequestHandler):
 
@@ -30,20 +30,21 @@ class Main(webapp.RequestHandler):
     account = models.Account.all().filter("action_path =", action_path).get()
     if not account:
       raise ValueError("Invalid Account Action Path '%s'" % action_path)
-    
-    lead = models.Lead(**{
-        'account': account,
-        'email': cgi.escape(self.request.get('email')),
-        'first_name': cgi.escape(self.request.get('first_name')),
-        'last_name': cgi.escape(self.request.get('last_name')),
-        'phone_number': cgi.escape(self.request.get('phone_number')),
-        'postal_address': cgi.escape(self.request.get('postal_address')),
-        })
+
+    lead_ctx = {}
+    for key in self.request.arguments():
+      value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
+      lead_ctx[str(key)] = value or None
+    lead_ctx['account'] = account
+
+    lead = models.Lead(**lead_ctx)
     lead.put()
+
+    # START HERE TO DEBUG
 
     # email account
     account_email_body = template.render(
-      TEMPLATE_DIR + "/new_lead_email.txt",
+      TMPL_PATH + "/new_lead_email.txt",
       {'lead': lead},
       )
     mail.send_mail(**{
@@ -55,7 +56,7 @@ class Main(webapp.RequestHandler):
     # email lead with attachment
     # should pull from db for account
     lead_email_body = template.render(
-      TEMPLATE_DIR + "/default_response_email.txt",
+      TMPL_PATH + "/default_response_email.txt",
       {'lead': lead},
       )
     # should pull from db for account
@@ -67,14 +68,10 @@ class Main(webapp.RequestHandler):
         'body': lead_email_body,
         'attachments': [attachment]
         })
-    
     # display confirmation page, include back link
     self.response.out.write("Thank you for your inquiry, %s." % lead.first_name)
 
-
-
     
-
 app = webapp.WSGIApplication([
     (r'/submit/(.+?)/?', Main),
     ], debug=True)
