@@ -22,7 +22,7 @@ def add_su_account():
   user = users.get_current_user()
   # check to see if user already exists
   if models.Account.all().filter("user =", user).get():
-    raise ValueError("Account for user %s already exists.")
+    raise ValueError("Account for user %s already exists." % user)
   su = models.Account(
     title = user.nickname(),
     action_path = user.nickname(),
