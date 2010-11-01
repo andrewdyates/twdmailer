@@ -1,6 +1,6 @@
 #!/usr/bin/python2.5
 # -*- coding: utf-8 -*-
-
+# Copyright © 2010 Andrew D. Yates
 from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
 
@@ -25,7 +25,6 @@ class Lead(polymodel.PolyModel):
   last_name = db.StringProperty()
   date_created = db.DateTimeProperty(auto_now_add=True)
   date_updated = db.DateTimeProperty(auto_now=True)
-  date_deleted = db.DateTimeProperty()
 
   
 class LeadStatus(db.Model):
