@@ -24,6 +24,7 @@ import models
 BOT_EMAIL = "mailer@twdmailer.appspotmail.com"
 TMPL_PATH = os.path.join(os.path.dirname(__file__), 'templates/')
 
+
 class Main(webapp.RequestHandler):
 
   def post(self, action_path):
@@ -44,13 +45,17 @@ class Main(webapp.RequestHandler):
     for key in self.request.arguments():
       value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
       lead_ctx[str(key)] = value or None
+      
     # note: email is required property
     lead = models.Lead(account=account, **lead_ctx)
-    lead.put()
 
-    # TODO: do not repeat submission for duplicate email submission
-    # TODO: throttle emails sent per IP
- 
+    if not models.Lead.all().filter("email =", lead_ctx['email']).get():
+      lead.put()
+      models.LeadStatus(lead=lead, key_name=lead_ctx['email']).put()
+    else:
+      logging.warning("Email %s already submitted.")
+      return
+
     # email account
     account_email_body = template.render(
       TMPL_PATH + "/new_lead_email.txt",
