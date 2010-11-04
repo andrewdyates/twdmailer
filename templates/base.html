@@ -2,16 +2,16 @@
   <head>
     <title>{% block title %}Toledo Web Design Mailer: {{ title }}{% endblock %}</title>
     <style type="text/css">
-      <!--
+      <!-- 
       @import url("/static/style.css");
       -->
     </style>
   </head>
   <body>
 
-    <h1 id="AppTitle">Toledo Web Design Automailer</h1>
-    
+  {% include "title.html" %}
   {% include "auth.html" %}
+  {% include "message.html" %}
 
   <table id="LayoutTable">
     <tbody>

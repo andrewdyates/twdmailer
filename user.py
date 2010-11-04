@@ -19,29 +19,78 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 import models
 
 
-TMPL_PATH = os.path.join(os.path.dirname(__file__), 'templates/')
+TMPL_DIR = os.path.join(os.path.dirname(__file__), "templates")
 
-class MainPage(webapp.RequestHandler):
-  def get(self):
-    _w = self.response.out.write
-    user = users.get_current_user()
-    auth = {
-      'user': user,
+class BasePage(webapp.RequestHandler):
+
+  def __init__(self, *args, **kwds):
+    """Initialize an empty page."""
+    super(BasePage, self).__init__(*args, **kwds)
+    self.template_name = "base.html"
+    self.content = ""
+    self.message = ""
+    self.title = self.get_default_title()
+    self.auth = None
+    self.account = None
+    self.ctx = {}
+    self.page = self.get_page_slug()
+    self.user = users.get_current_user()
+    # generate contexts
+    self.make_auth_ctx()
+    self.make_account_ctx(self.user)
+
+  @classmethod
+  def get_page_slug(cls):
+    """Return string slug for URI.
+
+    Returns:
+      str: slug of current URI
+    """
+    uri = os.environ['PATH_INFO']
+    slug = uri.partition('?')[0].partition('#')[0]
+    slug = slug.lstrip('/')
+    slug = slug.replace('/', '__')
+    return slug
+
+  @classmethod
+  def get_default_title(cls):
+    """Return default title from page slug.
+
+    Returns:
+      str: title generated from slug name
+    """
+    slug = cls.get_page_slug()
+    title = slug.rpartition('__')[2]
+    title = ' '.join([w.capitalize() for w in title.split('_')])
+    return title
+    
+  def make_auth_ctx(self):
+    """Fetch and configure self.auth for current user."""
+    if "Development" in os.environ['SERVER_SOFTWARE']:
+      super_url = "http://%s%s" % (os.environ['HTTP_HOST'], "/_ah/admin")
+    else:
+      super_url = "https://appengine.google.com/dashboard?&app_id=%s" % \
+        os.environ['APPLICATION_ID']
+    self.auth = {
+      'user': self.user,
       'login_url': users.create_login_url(os.environ['PATH_INFO']),
       'logout_url': users.create_logout_url('/logged_out'),
-      'is_admin': users.is_current_user_admin(),
+      'is_super': users.is_current_user_admin(),
+      'super_url': super_url,
       }
-    title = "%s User Page" % user
-    content = ""
-
-    # get Account for user
+    
+  def make_account_ctx(self, user):
+    """Fetch and verify self.account for current user."""
     q = models.Account.all().filter("user =", user).filter("is_active =", True)
     account = q.get()
-    if not account:
-      logging.warning("Logged in user %s does not have an account. Try /super?" % user)
-      content += "<p>No active account exists for user %s." + \
-        "Contact an administrator to activate your account.</p>"
-      q = models.Account.all().filter("user =", user).filter("is_active", False)
+    if account:
+      self.account = account
+    else:
+      logging.warning("No active account exists for logged in user %s." % user)
+      self.message += "No active account exists for user %s." + \
+        "Contact an administrator to activate your account."
+      # create default inactive account for this user if it does not exist
+      q = models.Account.all().filter('user =', user).filter('is_active', False)
       if not q.get():
         new_account = models.Account(
           title = user.nickname(),
@@ -51,41 +100,33 @@ class MainPage(webapp.RequestHandler):
           )
         new_account.put()
         logging.info("Inactive Account for user %s created." % user)
-      # BREAK
-      return 
+        
+  def render_page(self):
+    ctx = {
+      'auth': self.auth,
+      'content': self.content,
+      'title': self.title,
+      'message': self.message,
+      }
+    ctx.update(self.ctx)
+    _w = self.response.out.write
+    _w(template.render("%s/%s" % (TMPL_DIR, self.template_name), ctx))
 
-    content = "<h1>%s User Page</h1>" % user
-    
-    # list leads
-    content += "<h3>Leads</h3>"
-    q = models.Lead.all().filter("account =", account).order("-date_created")
-    cursor = self.request.get("cursor")
-    if cursor:
-      q.with_cursor(cursor)
 
-    Q_SIZE = 30
-    results = q.fetch(Q_SIZE)
-    next_cursor = q.cursor()
-    
-    if not results and not cursor:
-      content += "<p>No leads yet submitted.</p>"
-    else:
-      content += "<table><tr><th>email</th><th>date created</th></tr>"
-      for r in results:
-        content += "<tr><td>%s</td><td>%s</td>" % (r.email, r.date_created)
-      content += "</table>"
-      next_url = os.environ['PATH_INFO'] + "?cursor=%s" % next_cursor
-      
-      if results and len(results) == Q_SIZE:
-        content += '<a href="%s">Next %s</a><br />' % (next_url, Q_SIZE)
-      
-      content += '<a href="%s">Return to Top of Results</a><br />' % os.environ['PATH_INFO']
 
-      
+class MainPage(BasePage):
+  
+  def get(self):
+
+    if not self.account:
+      # break
+      self.render_page()
+      return
+
+    self.content += "<h2>Hello.</h2>"
+    self.content += self.page
+    self.render_page()
     
-    # settings page for attachments, email contents
-    ctx = {'auth': auth, 'content': content, 'title': title}
-    _w(template.render(TMPL_PATH + "base.html", ctx))
 
 
 class LeadPage(webapp.RequestHandler):
@@ -96,8 +137,7 @@ class LeadPage(webapp.RequestHandler):
 
     
 app = webapp.WSGIApplication([
-    (r'/?', MainPage),
-    (r'/user/lead/(.+)/?', LeadPage),
+    (r'/user/lead_listing', MainPage),
     ], debug=True)
 
 def main():

@@ -1,10 +1,19 @@
 <div id="Menu">
 <ul id="MenuList">
-  <li class="menu-item"><a href="/admin">Admin</a></li>
-  <li class="menu-item active-menu"><a href="/user">User</a></li>
-  <li class="menu-item"><a href="">Lead Listing</a></li>
-  <li class="menu-item"><a href="">User Settings</a></li>
-  <li class="menu-item"><a href="">Attachment</a></li>
-  <li class="menu-item"><a href="">Email Templates</a></li>
+  <li class="menu-section">
+    <div class="menu-title">Admin</div>
+    <ul class="submenu">
+      <li class="menu-item{% ifequal page 'super__bootstrap_superuser' %} active-menu{% endifequal %}"><a href="/super/bootstrap_superuser">Bootstrap Superuser</a></li>
+      <li class="menu-item{% ifequal page 'super__manage_accounts' %} active-menu{% endifequal %}"><a href="/super/manage_accounts">Manage Accounts</a></li>
+    </ul>
+  </li>
+  <li class="menu-section">
+    <div class="menu-title">User</div>
+    <ul class="submenu">
+      <li class="menu-item{% ifequal page 'user__lead_listing' %} active-menu{% endifequal %}"><a href="/user/lead_listing">Lead Listing</a></li>
+      <li class="menu-item{% ifequal page 'user__email_attachment' %}active-menu{% endifequal %}"><a href="/user/email_attachment">Email Attachment</a></li>
+      <li class="menu-item{% ifequal page 'user__email_templates' %}active-menu{% endifequal %}"><a href="/user/email_templates">Email Templates</a></li>
+    </ul>
+  </li>
 </ul>
 </div>

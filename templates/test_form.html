@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block body %}
+<h2>Submit Sample Contact</h2>
+<p><em>Posts to user with action path "{{ action_path }}."</em></p>
+
 <form action="/submit/{{ action_path }}" method="post">
 <label for="id_email">email</label>
 <input type="text" name="email" id="id_email" value="" /><br />

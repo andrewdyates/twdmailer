@@ -20,32 +20,28 @@ handlers:
 - url: /logged_out
   script: logged_out.py
 
+- url: /?
+  script: main.py
+  login: required
+
 - url: /super/?.*
   script: super.py
   login: admin
-  
-- url: /admin/?.*
-  script: admin.py
-  login: required
-
-- url: /submit/?.*
-  script: submit.py
-
-- url: /?
-  script: user.py
-  login: required
 
 - url: /user/?.*
   script: user.py
   login: required
 
+- url: /submit/?.*
+  script: submit.py
+
 
 # Cron Automated Jobs, see cron.yaml
 - url: /cron/?.*
-  login: admin
   script: cron.py
+  login: admin
 
 # Developer Testing
 - url: /test/?.*
-  login: admin
   script: test.py
+  login: admin

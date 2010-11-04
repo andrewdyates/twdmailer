@@ -1,3 +1,9 @@
+/*
+medblue: #C5D7EF
+lgtblue: #E5ECF9
+drkblue: #3366CC
+*/
+
 body {
    font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
    line-height: 1.6em;
@@ -12,12 +18,10 @@ body {
    color: #3366CC;
    font-weight: normal;
 }
-/*
-medblue: #C5D7EF
-lgtblue: #E5ECF9
-drkblue: #3366CC
-*/
-
+h2 {
+   padding: 2px 0 4px 0;
+   border-bottom: 1px solid #E5ECF9;   
+}
 #UserStatusBar {
    background-color: #E5ECF9;
    color: #000000;
@@ -41,7 +45,7 @@ drkblue: #3366CC
    border-collapse: collapse;
 }
 #LeftColumn {
-   width: 180px;
+   width: 190px;
    vertical-align: top;
    text-align: left
    }
@@ -64,7 +68,7 @@ drkblue: #3366CC
    font-size: 0.9em;
    margin: 0 1.6em 0 0.4em;
    border-right: 2px solid #E5ECF9;
-   padding: 0.2em 0 1em 0;
+   padding: 0 0 1em 0;
 }
 #MenuList {
    margin: 0;
@@ -72,12 +76,31 @@ drkblue: #3366CC
    list-style: none;
    display: block;
 }
+.submenu {
+   margin: 0;
+   padding: 0;
+}
 .menu-item {
    display: block;
    margin: 0.6em 0;
    padding: 2px 2px 2px 8px;
 }
-.active-menu {
-   background-color: #E5ECF9;
+.menu-title {
+   margin-top: 1.0em;
+   border-bottom: 1px solid #E5ECF9;
    font-weight: bold;
 }
+
+.active-menu {
+   background-color: #E5ECF9;
+}
+.active-menu a {
+   color: #111;
+   text-decoration: none;
+}
+#Message {
+   margin: 1em;
+   border: 1px solid black;
+   font-weight: bold;
+   padding: 1em;
+   }
