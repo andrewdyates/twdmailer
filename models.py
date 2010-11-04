@@ -14,7 +14,6 @@ class Account(db.Model):
   date_created = db.DateTimeProperty(auto_now_add=True)
   date_updated = db.DateTimeProperty(auto_now=True)
   is_active = db.BooleanProperty(default=True)
-  is_admin = db.BooleanProperty(default=False)
 
 
 class Lead(polymodel.PolyModel):
@@ -28,7 +27,6 @@ class Lead(polymodel.PolyModel):
 
   
 class LeadStatus(db.Model):
-  # lead status
   lead = db.ReferenceProperty(required=True)
   date_hard_copy_mailed = db.DateTimeProperty()
   date_suspend_auto_mailer = db.DateTimeProperty()

@@ -37,6 +37,7 @@ class Main(webapp.RequestHandler):
       logging.warning("No email for lead submission.")
 
     action_path = urllib.unquote(action_path)
+    # try fetching 2, if >1 returns, then log warning
     account = models.Account.all().filter("action_path =", action_path).get()
     if not account:
       raise ValueError("Invalid Account Action Path '%s'" % action_path)

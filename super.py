@@ -4,6 +4,7 @@
 """Super: Bootstrap application by adding current user as an Account
 with admin access.
 """
+import logging
 import os
 
 from google.appengine.api import users
@@ -12,40 +13,47 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 
+import base
 import models
 
-PATH = os.path.join(os.path.dirname(__file__), 'templates/super.html')
 
-
-def add_su_account():
-  """Add logged-in (super) user as an admin Account."""
-  user = users.get_current_user()
-  # check to see if user already exists
-  if models.Account.all().filter("user =", user).get():
-    raise ValueError("Account for user %s already exists." % user)
-  su = models.Account(
-    title = user.nickname(),
-    action_path = user.nickname(),
-    user = user,
-    is_admin = True,
-    )
-  su.put()
-  return su
-  
-class Main(webapp.RequestHandler):
-  def get(self, message=None):
-    _w = self.response.out.write
-    try:
-      su = add_su_account()
-    except ValueError, e:
-      msg = "ERROR: %s" % e
+class BootstrapSuperuser(base.BasePage):
+  """Add logged-in (super) user as super Account."""
+  def get(self):
+    account = models.Account.all().filter("user =", self.user).get()
+    if self.account:
+      if account.is_active:
+        self.message += "Active account %s already exists." % self.user
+      else:
+        account.is_active = True
+        account.put()
+        msg = "SUCCESS: Account for %s activated." % self.user
+        self.message += "SUCCESS: Account for %s activated." % self.user
+        logging.info(msg)
     else:
-      msg = "SUCCESS: Admin Account '%s' created." % su.title
-    _w(template.render(PATH, {'msg': msg, 'user': users.get_current_user()}))
+      logging.warning("base.BasePage makes stub user, so this shouldn't run.")
+    self.render_page()
+
+    
+class ManageAccounts(base.BasePage):
+  def get(self):
+    self.content += "Stubbed. List accounts here."
+    self.render_page()
+
+    
+class TestForms(base.BasePage):
+  def get(self):
+    self.template = "test_form.html"
+    self.ctx = {
+      'action_path': self.user.nickname(),
+      }
+    self.render_page()
 
     
 app = webapp.WSGIApplication([
-    (r'.*', Main),
+    (r'/super/bootstrap_superuser', BootstrapSuperuser),
+    (r'/super/manage_accounts', ManageAccounts),
+    (r'/super/test_forms', TestForms),
     ], debug=True)
 
 def main():

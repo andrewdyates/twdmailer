@@ -3,7 +3,7 @@
     <div id="UserStatusBar">
       {% if auth.user %}
         {% if auth.is_super %}
-          <span class="user-roll"><a href="{{ auth.super_url }}">Super</a></span>
+          <span class="user-roll"><a href="{{ auth.super_url }}">Super Controls</a></span>
         {% endif %}
         {% if auth.is_admin %}
           <span class="user-roll"><a href="/admin">Admin</a></span>
