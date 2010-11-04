@@ -1,0 +1,15 @@
+  {% block auth %}
+    {% if auth %}
+    <div id="UserStatusBar">
+      {% if auth.user %}
+        {% if auth.is_admin %}
+          <span class="user-roll"><a href="/admin">Admin</a></span>
+        {% endif %}
+        <span class="user-roll">User: {{ auth.user.nickname }}</span>
+	<span class="last-item"><a href="{{ auth.logout_url }}">Logout</a></span>
+      {% else %}
+        <a href="{{ auth.login_url }}">Login</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% endblock %}

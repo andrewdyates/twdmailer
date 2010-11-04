@@ -8,7 +8,6 @@
 * If Admin, include suspension / activation link
 * Lead pages include demographics and status information
 """
-
 import logging
 import os
 
@@ -30,6 +29,7 @@ class MainPage(webapp.RequestHandler):
       'user': user,
       'login_url': users.create_login_url(os.environ['PATH_INFO']),
       'logout_url': users.create_logout_url('/logged_out'),
+      'is_admin': users.is_current_user_admin(),
       }
     title = "%s User Page" % user
     content = ""
@@ -38,10 +38,10 @@ class MainPage(webapp.RequestHandler):
     q = models.Account.all().filter("user =", user).filter("is_active =", True)
     account = q.get()
     if not account:
-      logging.warning("Logged in user %s does not have an account.")
+      logging.warning("Logged in user %s does not have an account. Try /super?" % user)
       content += "<p>No active account exists for user %s." + \
         "Contact an administrator to activate your account.</p>"
-      q = models.Account.all.filter("user =", user).filter("is_active", False)
+      q = models.Account.all().filter("user =", user).filter("is_active", False)
       if not q.get():
         new_account = models.Account(
           title = user.nickname(),
@@ -96,7 +96,7 @@ class LeadPage(webapp.RequestHandler):
 
     
 app = webapp.WSGIApplication([
-    (r'/user/?', MainPage),
+    (r'/?', MainPage),
     (r'/user/lead/(.+)/?', LeadPage),
     ], debug=True)
 

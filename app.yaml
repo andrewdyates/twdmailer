@@ -11,34 +11,34 @@ builtins:
 
 handlers:
 
-# Authentication
+- url: /static
+  static_dir: static
+
 - url: /_ah/login_required
   script: do_openid_login.py
+  
 - url: /logged_out
   script: logged_out.py
 
-# Super
 - url: /super/?.*
   script: super.py
   login: admin
   
-# Admin
 - url: /admin/?.*
   script: admin.py
   login: required
 
-# User
+- url: /submit/?.*
+  script: submit.py
+
+- url: /?
+  script: user.py
+  login: required
+
 - url: /user/?.*
   script: user.py
   login: required
 
-# Submission
-- url: /submit/?.*
-  script: submit.py
-
-# Home
-- url: /
-  script: main.py
 
 # Cron Automated Jobs, see cron.yaml
 - url: /cron/?.*

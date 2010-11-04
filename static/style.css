@@ -1,0 +1,83 @@
+body {
+   font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+   line-height: 1.6em;
+   font-size: 14px;
+   color: #111;
+}
+
+#AppTitle {
+   font-size: 1.2em;
+   padding: 0;
+   margin: 1em 0 0 0;
+   color: #3366CC;
+   font-weight: normal;
+}
+/*
+medblue: #C5D7EF
+lgtblue: #E5ECF9
+drkblue: #3366CC
+*/
+
+#UserStatusBar {
+   background-color: #E5ECF9;
+   color: #000000;
+   padding: 0 0.6em 0 1.6em;
+   border-top: 1px solid #3366CC;
+   border-bottom: 1px solid #C5D7EF;
+   text-align: right;
+   margin: 0 0 0.6em 0;
+}
+.user-roll {
+   border-right: 1px solid #333;
+   padding: 0 0.6em 0 0.6em;
+}
+
+#LayoutTable {
+   width: 100%;
+   padding: 0;
+   margin: 0;
+   border-spacing: 0;
+   border-width: 0;
+   border-collapse: collapse;
+}
+#LeftColumn {
+   width: 180px;
+   vertical-align: top;
+   text-align: left
+   }
+#MainColumn {
+   width: *;
+   vertical-align: top;
+   text-align: left
+   }
+
+#UserStatusBar .last-item {
+   margin-left: 0.6em;
+}
+#Footer {
+   margin: 1.6em 0 0 0;
+   border-top: 1px solid #3366CC;
+   text-align: center;
+   font-size: 0.8em;
+}
+#Menu {
+   font-size: 0.9em;
+   margin: 0 1.6em 0 0.4em;
+   border-right: 2px solid #E5ECF9;
+   padding: 0.2em 0 1em 0;
+}
+#MenuList {
+   margin: 0;
+   padding: 0;
+   list-style: none;
+   display: block;
+}
+.menu-item {
+   display: block;
+   margin: 0.6em 0;
+   padding: 2px 2px 2px 8px;
+}
+.active-menu {
+   background-color: #E5ECF9;
+   font-weight: bold;
+}
