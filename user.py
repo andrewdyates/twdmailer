@@ -126,9 +126,16 @@ class EmailAttachment(base.BasePage):
     
 class EmailTemplates(base.BasePage):
   def get(self):
-    self.content += "Stubbed. Create form to change 2 email templates and confirmation message."
+    # this should be middleware in base.BasePage
+    if not self.account:
+      self.render_page()
+      return
+    
+    self.template = "email_templates.html"
+
     self.render_page()
 
+    
 class FileDownload(webapp.RequestHandler):
   def get(self, key):
     # don't do account access verification
@@ -139,7 +146,6 @@ class FileDownload(webapp.RequestHandler):
     h['Content-Type'] = file.mime
 
     self.response.out.write(file.data)
-
 
     
 app = webapp.WSGIApplication([

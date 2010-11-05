@@ -118,10 +118,14 @@ h2 {
    margin: 0 1.6em 0 0.6em;
    }
 .simple-form .text-field {
-   width: 30em;
+   width: 40em;
    }
 .simple-form .submit-button {
    margin: 1.6em 0.6em 1.6em 0.6em;
+}
+.simple-form .text-body {
+   width: 60em;
+   height: 12em;
 }
 .inline-message {
    font-style: italic;
@@ -178,4 +182,10 @@ fieldset {
    margin: 0;
    padding: 0;
    border: none;
+}
+.form-table {
+   border-collapse:collapse;
+}
+.form-table td {
+   padding: 0.6em;
 }

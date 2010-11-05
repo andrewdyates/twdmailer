@@ -41,14 +41,13 @@ class Attachment(db.Model):
   date_created = db.DateTimeProperty(auto_now_add=True)
 
   
-class EmailMessage(db.Model):
+class EmailTemplate(db.Model):
   """A stock automated email message."""
   # assign default user value?
-  account = db.ReferenceProperty(Account)
-  sequence_num = db.IntegerProperty(default=0)
-  reply_to = db.EmailProperty()
+  account = db.ReferenceProperty(Account, required=True)
   subject = db.StringProperty(default="Follow Up")
-  attachment = db.ReferenceProperty(Attachment)
-  body = db.TextProperty(required=True)
-  date_created = db.DateTimeProperty(auto_now_add=True)
+  body = db.TextProperty(default="")
+  is_first_response = db.BooleanProperty()
   date_updated = db.DateTimeProperty(auto_now=True)
+  date_created = db.DateTimeProperty(auto_now_add=True)
+
