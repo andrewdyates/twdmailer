@@ -2,7 +2,6 @@
 
 {% block content %}
 
-{% if leads %}
 <div class="data-table-area">
 <table class="data-table" id="LeadListTable">
   <thead>
@@ -38,25 +37,26 @@
   </tbody>
   <tfoot>
     <td colspan="6">
-      
+
       <span class="nav-link">
-      {% if prev_link %}
-      <a href="{{ prev_link }}">&#171; Previous {{ set_size }}</a>
-      {% endif %}
+      Page {{ pg }}
       </span>
-      
+
+      {% if top_link %}
       <span class="nav-link">
+      <a href="{{ top_link }}">&uarr; Top of List</a>
+      </span>
+      {% endif %}
+
       {% if next_link %}
-      <a href="{{ next_link }}">Next {{ set_size }} &#187;</a>
-      {% endif %}
+      <span class="nav-link">
+      <a href="{{ next_link }}">Next {{ set_size }} &rarr;</a>
       </span>
+      {% endif %}
       
     </td>
   </tfoot>
 </table>
 </div>
-{% else %}
-<div class="inline-message">No leads for {{ auth.user }}.</div></p>
-{% endif %}
 
 {% endblock %}

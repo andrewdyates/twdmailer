@@ -17,7 +17,7 @@ class LeadListing(base.BasePage):
   
   def get(self):
 
-    Q_SIZE = 30
+    Q_SIZE = 100
     self.template = "lead_listing.html"
 
     # this should be middleware in base.BasePage
@@ -25,32 +25,31 @@ class LeadListing(base.BasePage):
       self.render_page()
       return
 
-    this_cursor = self.request.get("cursor", None)
-    prev_cursor = self.request.get("last", None)
+    cursor = self.request.get("cursor", None)
+    pg = self.request.get("pg", 1)
+    next_pg = "%s" % (int(pg) + 1)
     
     q = models.Lead.all().filter("account =", self.account).order("-date_created")
-    if this_cursor:
-      q.with_cursor(this_cursor)
-
+    if cursor:
+      q.with_cursor(cursor)
     leads = q.fetch(Q_SIZE)
     
     if len(leads) < Q_SIZE:
-      next_cursor = None
+      self.ctx['next_link'] = None
     else:
       next_cursor = q.cursor()
+      self.ctx['next_link'] = "%s?cursor=%s&pg=%s" % \
+        (self.request.path, next_cursor, next_pg)
 
-    for lead in leads:
-      logging.info(lead.email)
-      lead.status = "Hello"
+    if cursor:
+      self.ctx['top_link'] = self.request.path
+    else:
+      self.ctx['top_link'] = None
 
-    next_link = None
-      
     self.ctx['leads'] = leads
-    self.ctx['next_link'] = "#"
-    self.ctx['prev_link'] = "#"
-    self.ctx['set_size'] = "%s" % Q_SIZE
-    next_link = None
-    prev_link = None
+    self.ctx['pg'] = pg
+    self.ctx['set_size'] = str(Q_SIZE)
+
     self.render_page()
 
 
