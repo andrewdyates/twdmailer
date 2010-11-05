@@ -90,27 +90,38 @@ class EmailAttachment(base.BasePage):
       return
 
     self.template = "file_upload.html"
-
-    # select current attachment
     q = models.Attachment.all().filter("account =", self.account)
     q.order("-date_created")
-    file = q.get()
-
-    if not file:
-      self.content += "No File."
-    else:
-      self.content += "What is file name?"
-      
+    self.ctx['attachment'] = q.get()
     self.render_page()
 
   def post(self):
-    data = self.request.POST['file'].file.read()
-    filename = self.request.POST['file'].filename
+    # this should be middleware in base.BasePage
+    if not self.account:
+      self.render_page()
+      return
 
-    self.content += "Test file %s upload: <pre>" % filename
-    self.content += data
-    self.content += "</pre>"
-    self.render_page()
+    upload = self.request.POST['file']
+    # catch empty uploads since 'upload' truth eval is always False
+    try:
+      upload.filename
+    except AttributeError:
+      logging.warning("No file uploaded.")
+      self.redirect("")
+      return
+
+    # add to datastore
+    attachment = models.Attachment(
+      account = self.account,
+      data = upload.file.read(),
+      filename = upload.filename,
+      mime = upload.type,
+      )
+    attachment.put()
+    logging.info("Attachment %s successfully uploaded for %s." % \
+                   (upload.filename, self.user))
+
+    self.redirect("")
 
     
 class EmailTemplates(base.BasePage):
