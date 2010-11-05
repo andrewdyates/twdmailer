@@ -130,17 +130,23 @@ class EmailTemplates(base.BasePage):
     self.render_page()
 
 class FileDownload(webapp.RequestHandler):
-  def get(self):
-    key = self.request.get("key", None)
-#    res.content_disposition = 'attachment; filename=foo.xml'
-    # set mime type in header
-    # make body file contents
+  def get(self, key):
+    # don't do account access verification
+    file = models.Attachment.get(key)
+    
+    h = self.response.headers
+    h['Content-Disposition'] = 'attachment; filename=%s' % file.filename
+    h['Content-Type'] = file.mime
+
+    self.response.out.write(file.data)
+
 
     
 app = webapp.WSGIApplication([
     (r'/user/lead_listing', LeadListing),
     (r'/user/email_attachment', EmailAttachment),
     (r'/user/email_templates', EmailTemplates),
+    (r'/user/download/(.+)', FileDownload),
     ], debug=True)
 
 def main():
