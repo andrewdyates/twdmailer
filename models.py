@@ -37,6 +37,7 @@ class Attachment(db.Model):
   account = db.ReferenceProperty(Account, required=True)
   data = db.BlobProperty(required=True)
   filename = db.StringProperty(required=True)
+  mime = db.StringProperty(required=True)
   date_created = db.DateTimeProperty(auto_now_add=True)
 
   

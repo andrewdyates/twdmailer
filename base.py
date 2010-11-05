@@ -36,6 +36,11 @@ class BasePage(webapp.RequestHandler):
     self.make_auth_ctx()
     self.make_account_ctx(self.user)
 
+# TO DO
+#  def initialize(self, request, response):
+#    self.write = response.out.write
+#    super(BasePage, self).initialize(request, response)
+
   @classmethod
   def get_page_slug(cls):
     """Return string slug for URI.

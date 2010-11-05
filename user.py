@@ -84,7 +84,32 @@ class LeadListing(base.BasePage):
 
 class EmailAttachment(base.BasePage):
   def get(self):
-    self.content += "Stubbed. Display attachment and allow upload of new attachment."
+    # this should be middleware in base.BasePage
+    if not self.account:
+      self.render_page()
+      return
+
+    self.template = "file_upload.html"
+
+    # select current attachment
+    q = models.Attachment.all().filter("account =", self.account)
+    q.order("-date_created")
+    file = q.get()
+
+    if not file:
+      self.content += "No File."
+    else:
+      self.content += "What is file name?"
+      
+    self.render_page()
+
+  def post(self):
+    data = self.request.POST['file'].file.read()
+    filename = self.request.POST['file'].filename
+
+    self.content += "Test file %s upload: <pre>" % filename
+    self.content += data
+    self.content += "</pre>"
     self.render_page()
 
     
@@ -92,6 +117,13 @@ class EmailTemplates(base.BasePage):
   def get(self):
     self.content += "Stubbed. Create form to change 2 email templates and confirmation message."
     self.render_page()
+
+class FileDownload(webapp.RequestHandler):
+  def get(self):
+    key = self.request.get("key", None)
+#    res.content_disposition = 'attachment; filename=foo.xml'
+    # set mime type in header
+    # make body file contents
 
     
 app = webapp.WSGIApplication([
