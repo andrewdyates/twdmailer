@@ -7,22 +7,37 @@
 <table class="data-table" id="LeadListTable">
   <thead>
     <th>Email</th>
-    <th>Date Submitted</th>
-    <th>Status</th>
+    <th>Submitted</th>
+    <th>Last Pinged</th>
+    <th>Hardcopy Mailed</th>
+    <th>Closed</th>
     <th></th>
   </thead>
   <tbody>
     {% for lead in leads %}
     <tr>
-      <td>{{ lead.email }}</td>
+      <td><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></td>
       <td>{{ lead.date_created|date:"D d M Y" }}</td>
-      <td>{{ lead.status }}</td>
-      <td><a href="">edit</a></td>
+      <td>{{ lead.date_last_auto_ping|date:"D d M Y" }}</td>
+      <td>
+	{% if lead.closed %}
+	  mailed {{ lead.date_closed|date:"D d M Y" }}
+	{% else %}
+	  <a href="{{ lead.mail_link }}">mail hardcopy</a>
+	{% endif %}
+      <td>
+	{% if lead.closed %}
+	  closed {{ lead.date_closed|date:"D d M Y" }}
+	{% else %}
+	  <a href="{{ lead.close_link }}">close</a>
+	{% endif %}
+      </td>
+      <td><a href="{{ lead.details }}">details</a></td>
     </tr>
     {% endfor %}
   </tbody>
   <tfoot>
-    <td colspan="4">
+    <td colspan="6">
       
       <span class="nav-link">
       {% if prev_link %}

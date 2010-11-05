@@ -33,11 +33,17 @@ class LeadListing(base.BasePage):
       q.with_cursor(this_cursor)
 
     leads = q.fetch(Q_SIZE)
-    next_cursor = q.cursor()
+    
+    if len(leads) < Q_SIZE:
+      next_cursor = None
+    else:
+      next_cursor = q.cursor()
 
     for lead in leads:
       logging.info(lead.email)
       lead.status = "Hello"
+
+    next_link = None
       
     self.ctx['leads'] = leads
     self.ctx['next_link'] = "#"

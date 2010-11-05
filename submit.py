@@ -6,9 +6,10 @@
 * Assign to Account based on url
 """
 import cgi
-import urllib
+import datetime
 import logging
 import os
+import urllib
 
 from google.appengine.api import users
 from google.appengine.api import mail
@@ -48,6 +49,7 @@ class Main(webapp.RequestHandler):
       value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
       lead_ctx[str(key)] = value or None
       
+    lead_ctx['date_last_auto_ping'] = datetime.datetime.now()
     # note: 'email' is required property
     lead = models.Lead(account=account, **lead_ctx)
 

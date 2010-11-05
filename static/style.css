@@ -14,7 +14,7 @@ body {
 #AppTitle {
    font-size: 1.4em;
    padding: 0;
-   margin: 1em 0 0 0;
+   margin: 1em 0 2px 0;
    color: #3366CC;
    font-weight: normal;
 }
@@ -106,8 +106,8 @@ h2 {
    padding: 1em;
    text-align: center;
    background-color: #ffffcc;
-   }
-
+   font-size: 1.2em;
+}
 .simple-form {
    line-height: 2em;
 }
