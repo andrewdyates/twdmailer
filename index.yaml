@@ -16,6 +16,13 @@ indexes:
   - name: date_created
     direction: desc
 
+- kind: EmailTemplate
+  properties:
+  - name: account
+  - name: is_first_response
+  - name: date_created
+    direction: desc
+
 - kind: Lead
   properties:
   - name: account

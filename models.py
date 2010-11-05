@@ -1,6 +1,8 @@
 #!/usr/bin/python2.5
 # -*- coding: utf-8 -*-
 # Copyright © 2010 Andrew D. Yates
+import os
+
 from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
 
@@ -43,11 +45,16 @@ class Attachment(db.Model):
   
 class EmailTemplate(db.Model):
   """A stock automated email message."""
+  TMPL_DIR = os.path.join(os.path.dirname(__file__), "templates")
+  DFLT_SUBJECT = "Follow Up"
+  DFLT_BODY_FIRST_FILE = os.path.join(TMPL_DIR, "default_response_email.txt")
+  DFLT_BODY_AUTO_FILE = os.path.join(TMPL_DIR, "default_ping_email.txt")
+  DFLT_BODY_FIRST = open(DFLT_BODY_FIRST_FILE).read()
+  DFLT_BODY_AUTO = open(DFLT_BODY_AUTO_FILE).read()
   # assign default user value?
   account = db.ReferenceProperty(Account, required=True)
-  subject = db.StringProperty(default="Follow Up")
-  body = db.TextProperty(default="")
+  subject = db.StringProperty()
+  body = db.TextProperty()
   is_first_response = db.BooleanProperty()
   date_updated = db.DateTimeProperty(auto_now=True)
   date_created = db.DateTimeProperty(auto_now_add=True)
-

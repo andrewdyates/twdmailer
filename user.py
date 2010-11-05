@@ -130,8 +130,47 @@ class EmailTemplates(base.BasePage):
     if not self.account:
       self.render_page()
       return
-    
+
+    class DummyEmailTemplate(object):
+      def __init__(self, body):
+        self.key = ''
+        self.subject = models.EmailTemplate.DFLT_SUBJECT
+        self.body = body
+
+    # first template
+    q = models.EmailTemplate.all().filter('account =', self.account)
+    q.filter('is_first_response =', True)
+    q.order('-date_created')
+    email_template_1 = q.get()
+    if not email_template_1:
+      email_template_1 = DummyEmailTemplate(models.EmailTemplate.DFLT_BODY_FIRST)
+
+    # auto template
+    q2 = models.EmailTemplate.all().filter('account =', self.account)
+    q2.filter('is_first_response =', False)
+    q2.order('-date_created')
+    email_template_auto = q2.get()
+    if not email_template_auto:
+      email_template_auto = DummyEmailTemplate(models.EmailTemplate.DFLT_BODY_AUTO)
+
     self.template = "email_templates.html"
+    self.ctx['forms'] = [
+      {'title': 'First Email Template',
+       'name': 'first',
+       'key': email_template_1.key,
+       'subject': email_template_1.subject,
+       'body': email_template_1.body,
+       },
+      {
+        'title': 'Automatic Responder Email Template',
+        'name': 'auto',
+        'key': email_template_auto.key,
+        'subject': email_template_auto.subject,
+        'body': email_template_auto.body,
+        },
+      ]
+    
+
 
     self.render_page()
 
