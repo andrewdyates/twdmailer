@@ -1,6 +1,7 @@
 /*
-medblue: #C5D7EF
+hltblue: #F5F7FC
 lgtblue: #E5ECF9
+medblue: #C5D7EF
 drkblue: #3366CC
 */
 
@@ -10,9 +11,8 @@ body {
    font-size: 14px;
    color: #111;
 }
-
 #AppTitle {
-   font-size: 1.2em;
+   font-size: 1.4em;
    padding: 0;
    margin: 1em 0 0 0;
    color: #3366CC;
@@ -20,7 +20,8 @@ body {
 }
 h2 {
    padding: 2px 0 4px 0;
-   border-bottom: 1px solid #E5ECF9;   
+   border-bottom: 1px solid #E5ECF9;
+   margin: 0.6em 0 1em 0;
 }
 #UserStatusBar {
    background-color: #E5ECF9;
@@ -45,7 +46,7 @@ h2 {
    border-collapse: collapse;
 }
 #LeftColumn {
-   width: 190px;
+   width: 230px;
    vertical-align: top;
    text-align: left
    }
@@ -62,10 +63,10 @@ h2 {
    margin: 1.6em 0 0 0;
    border-top: 1px solid #3366CC;
    text-align: center;
-   font-size: 0.8em;
+   font-size: 0.9em;
 }
 #Menu {
-   font-size: 0.9em;
+   font-size: 1em;
    margin: 0 1.6em 0 0.4em;
    border-right: 2px solid #E5ECF9;
    padding: 0 0 1em 0;
@@ -122,4 +123,49 @@ h2 {
 .simple-form .submit-button {
    margin: 1.6em 0.6em 1.6em 0.6em;
 }
-   
+.inline-message {
+   font-style: italic;
+   color: #444;
+}
+.data-table-area {
+   padding-right: 1.6em;
+}
+.data-table {
+   background: #ffffff;
+   margin: 1em 0 1.6em 0;
+   width: 100%;
+   border-collapse: collapse;
+   text-align: left;
+   font-size: 1em;
+}
+.data-table th {
+   font-weight: normal;
+   color: #003399;
+   padding: 6px 8px 6px 8px;
+   border-bottom: 2px solid #3366CC;
+   font-size: 1em;
+}
+.data-table td {
+   border-bottom: 1px solid #ccc;
+   color: #666699;
+   padding: 6px 8px 6px 8px;
+}
+.data-table tbody tr:hover td {
+   color: #333333;
+   background-color: #F5F7FC;
+}
+.data-table tfoot {
+   border-top: 1px solid #3366CC;
+   background-color: #E5ECF9;
+   text-align: center;
+   font-size: 0.9em;
+}
+.data-table tfoot td {
+   color: #333;
+}
+.data-table .nav-message {
+   font-style: italic;
+}
+.data-table .nav-link {
+   margin: 0 0.6em 0 0.6em;
+}

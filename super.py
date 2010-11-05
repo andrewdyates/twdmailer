@@ -28,7 +28,8 @@ class BootstrapSuperuser(base.BasePage):
         account.is_active = True
         account.put()
         msg = "SUCCESS: Account for %s activated." % self.user
-        self.message += "SUCCESS: Account for %s activated." % self.user
+        # overwrite possible "No active account exists" message
+        self.message = "SUCCESS: Account for %s activated." % self.user
         logging.info(msg)
     else:
       logging.warning("base.BasePage makes stub user, so this shouldn't run.")

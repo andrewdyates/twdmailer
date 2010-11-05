@@ -16,38 +16,35 @@ import models
 class LeadListing(base.BasePage):
   
   def get(self):
-    """FIX THIS"""
-    self.content += "STUBBED. FIX CODE<br />"
-
-    
-    if not self.account:
-      # break
-      self.render_page()
-      return
-    
-    q = models.Lead.all().filter("account =", self.account).order("-date_created")
-    cursor = self.request.get("cursor")
-    if cursor:
-      q.with_cursor(cursor)
 
     Q_SIZE = 30
-    results = q.fetch(Q_SIZE)
-    next_cursor = q.cursor()
-    
-    if not results and not cursor:
-      self.content += "<p>No leads yet submitted.</p>"
-    else:
-      self.content += "<table><tr><th>email</th><th>date created</th></tr>"
-      for r in results:
-        self.content += "<tr><td>%s</td><td>%s</td>" % (r.email, r.date_created)
-      self.content += "</table>"
-      next_url = os.environ['PATH_INFO'] + "?cursor=%s" % next_cursor
-      
-      if results and len(results) == Q_SIZE:
-        self.content += '<a href="%s">Next %s</a><br />' % (next_url, Q_SIZE)
-      
-      self.content += '<a href="%s">Return to Top of Results</a><br />' % os.environ['PATH_INFO']
+    self.template = "lead_listing.html"
 
+    # this should be middleware in base.BasePage
+    if not self.account:
+      self.render_page()
+      return
+
+    this_cursor = self.request.get("cursor", None)
+    prev_cursor = self.request.get("last", None)
+    
+    q = models.Lead.all().filter("account =", self.account).order("-date_created")
+    if this_cursor:
+      q.with_cursor(this_cursor)
+
+    leads = q.fetch(Q_SIZE)
+    next_cursor = q.cursor()
+
+    for lead in leads:
+      logging.info(lead.email)
+      lead.status = "Hello"
+      
+    self.ctx['leads'] = leads
+    self.ctx['next_link'] = "#"
+    self.ctx['prev_link'] = "#"
+    self.ctx['set_size'] = "%s" % Q_SIZE
+    next_link = None
+    prev_link = None
     self.render_page()
 
 
@@ -59,7 +56,7 @@ class EmailAttachment(base.BasePage):
     
 class EmailTemplates(base.BasePage):
   def get(self):
-    self.content += "Stubbed. Create form to change 2 email templates."
+    self.content += "Stubbed. Create form to change 2 email templates and confirmation message."
     self.render_page()
 
     

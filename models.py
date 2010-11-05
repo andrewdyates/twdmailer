@@ -7,7 +7,6 @@ from google.appengine.ext.db import polymodel
 
 class Account(db.Model):
   """Authenticated login like clients and admins."""
-  title = db.StringProperty()
   # action_path should be unique
   action_path = db.StringProperty()
   user = db.UserProperty(required=True)
@@ -25,13 +24,8 @@ class Lead(polymodel.PolyModel):
   date_created = db.DateTimeProperty(auto_now_add=True)
   date_updated = db.DateTimeProperty(auto_now=True)
 
-  
-class LeadStatus(db.Model):
-  lead = db.ReferenceProperty(required=True)
   date_hard_copy_mailed = db.DateTimeProperty()
-  date_suspend_auto_mailer = db.DateTimeProperty()
   date_closed = db.DateTimeProperty()
-  date_slowed_ping = db.DateTimeProperty()
   date_last_auto_ping = db.DateTimeProperty()
   num_auto_ping = db.IntegerProperty(default=0)
   notes = db.TextProperty()

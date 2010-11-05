@@ -21,10 +21,12 @@
       </td>
       <td id="MainColumn">
 	  {% block body %}
-	  {% if title %}
-	  <h2>{{ title }}</h2>
-	  {% endif %}
-	  {{ content }}
+	    {% if title %}
+	      <h2>{{ title }}</h2>
+	    {% endif %}
+  	    {% block content %}
+	      {{ content }}
+	    {% endblock %}
 	  {% endblock %}
       </td>
     </tr>

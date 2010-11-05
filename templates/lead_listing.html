@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if leads %}
+<div class="data-table-area">
+<table class="data-table" id="LeadListTable">
+  <thead>
+    <th>Email</th>
+    <th>Date Submitted</th>
+    <th>Status</th>
+    <th></th>
+  </thead>
+  <tbody>
+    {% for lead in leads %}
+    <tr>
+      <td>{{ lead.email }}</td>
+      <td>{{ lead.date_created|date:"D d M Y" }}</td>
+      <td>{{ lead.status }}</td>
+      <td><a href="">edit</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <td colspan="4">
+      
+      <span class="nav-link">
+      {% if prev_link %}
+      <a href="{{ prev_link }}">&#171; Previous {{ set_size }}</a>
+      {% endif %}
+      </span>
+      
+      <span class="nav-link">
+      {% if next_link %}
+      <a href="{{ next_link }}">Next {{ set_size }} &#187;</a>
+      {% endif %}
+      </span>
+      
+    </td>
+  </tfoot>
+</table>
+</div>
+{% else %}
+<div class="inline-message">No leads for {{ auth.user }}.</div></p>
+{% endif %}
+
+{% endblock %}

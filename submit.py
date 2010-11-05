@@ -43,18 +43,18 @@ class Main(webapp.RequestHandler):
       raise ValueError("Invalid Account Action Path '%s'" % action_path)
 
     lead_ctx = {}
+    # TODO: skip protected attributes
     for key in self.request.arguments():
       value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
       lead_ctx[str(key)] = value or None
       
-    # note: email is required property
+    # note: 'email' is required property
     lead = models.Lead(account=account, **lead_ctx)
 
     if not models.Lead.all().filter("email =", lead_ctx['email']).get():
       lead.put()
-      models.LeadStatus(lead=lead, key_name=lead_ctx['email']).put()
     else:
-      logging.warning("Email %s already submitted.")
+      logging.warning("Email %s already submitted." % lead_ctx['email'])
       return
 
     # email account
