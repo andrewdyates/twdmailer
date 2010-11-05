@@ -19,16 +19,30 @@
       <td>{{ lead.date_created|date:"D d M Y" }}</td>
       <td>{{ lead.date_last_auto_ping|date:"D d M Y" }}</td>
       <td>
-	{% if lead.closed %}
-	  mailed {{ lead.date_closed|date:"D d M Y" }}
+	{% if lead.date_hard_copy_mailed %}
+	  mailed {{ lead.date_hard_copy_mailed|date:"D d M Y" }}
 	{% else %}
-	  <a href="{{ lead.mail_link }}">mail hardcopy</a>
+	  <form action="" method="post" class="button-table">
+	    <fieldset>
+	      <input type="hidden" name="key" value="{{ lead.key }}" />
+	      <input type="hidden" name="page" value="{{ pg }}" />
+	      <input type="hidden" name="this_cursor" value="{{ this_cursor }}" />
+	      <input name="action" class="button" type="submit" value="mail hardcopy" />
+	    </fieldset>
+	  </form>
 	{% endif %}
       <td>
-	{% if lead.closed %}
+	{% if lead.date_closed %}
 	  closed {{ lead.date_closed|date:"D d M Y" }}
 	{% else %}
-	  <a href="{{ lead.close_link }}">close</a>
+	  <form action="" method="post" class="button-table">
+	    <fieldset>
+	      <input type="hidden" name="key" value="{{ lead.key }}" />
+	      <input type="hidden" name="page" value="{{ pg }}" />
+	      <input type="hidden" name="this_cursor" value="{{ this_cursor }}" />
+	      <input name="action" class="button" type="submit" value="close lead" />
+	    </fieldset>
+	  </form>
 	{% endif %}
       </td>
       <td><a href="{{ lead.details }}">details</a></td>
