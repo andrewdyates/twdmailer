@@ -1,5 +1,6 @@
 <div id="Menu">
 <ul id="MenuList">
+  {% if auth.is_super %}
   <li class="menu-section">
     <div class="menu-title">Super</div>
     <ul class="submenu">
@@ -7,6 +8,7 @@
       <li class="menu-item{% ifequal page 'super__test_forms' %} active-menu{% endifequal %}"><a href="/super/test_forms">Test Forms</a></li>
     </ul>
   </li>
+  {% endif %}
   <li class="menu-section">
     <div class="menu-title">User</div>
     <ul class="submenu">

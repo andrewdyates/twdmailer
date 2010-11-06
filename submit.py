@@ -23,48 +23,49 @@ import models
 # WARNING: "From" email must be authorized sender
 # See: http://code.google.com/appengine/docs/python/mail/sendingmail.html
 BOT_EMAIL = "mailer@twdmailer.appspotmail.com"
-TMPL_PATH = os.path.join(os.path.dirname(__file__), 'templates/')
-
+TMPL_DIR = os.path.join(os.path.dirname(__file__), "templates")
+  
 
 class Main(webapp.RequestHandler):
 
   def post(self, action_path):
 
+    # CREATE LEAD
+    # ==============
     lead_email = self.request.get("email", None)
-    # TODO: maybe do some email format checking here
     if lead_email:
       logging.info("New Lead Submission: %s" % lead_email)
     else:
-      logging.warning("No email for lead submission.")
+      logging.error("No email for lead submission.")
+      return 
 
     action_path = urllib.unquote(action_path)
-    # try fetching 2, if >1 returns, then log warning
     account = models.Account.all().filter("action_path =", action_path).get()
     if not account:
-      raise ValueError("Invalid Account Action Path '%s'" % action_path)
+      logging.error("Invalid Account Action Path '%s'" % action_path)
+      return
 
     lead_ctx = {}
-    # TODO: skip protected attributes
     for key in self.request.arguments():
-      value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
-      lead_ctx[str(key)] = value or None
-      
+      if key not in models.Lead.PROTECTED:
+        value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
+        lead_ctx[str(key)] = value or None
     lead_ctx['date_last_auto_ping'] = datetime.datetime.now()
+    
     # note: 'email' is required property
     lead = models.Lead(account=account, **lead_ctx)
-
     if not models.Lead.all().filter("email =", lead_ctx['email']).get():
       lead.put()
     else:
       logging.warning("Email %s already submitted." % lead_ctx['email'])
       return
 
-    # email account
+    # GENERATE ADMIN EMAIL
+    # ==============
     account_email_body = template.render(
-      TMPL_PATH + "/new_lead_email.txt",
+      TMPL_DIR + "/new_lead_email.txt",
       {'lead_ctx': lead_ctx},
       )
-
     mail.send_mail(
       sender=BOT_EMAIL,
       to=account.user.email(),
@@ -72,25 +73,41 @@ class Main(webapp.RequestHandler):
       body=account_email_body,
       )
     
-    # email lead with attachment
-    # NOTE: should pull from db for account
-    lead_email_body = template.render(
-      TMPL_PATH + "/default_response_email.txt",
-      {'lead': lead},
-      )
-    # should pull from db for account
-    attachment = ("sample.pdf", open(TMPL_PATH + "/sample.pdf").read())
+    # GENERATE USER EMAIL
+    # ==============
+    class DummyEmailTemplate(object):
+      def __init__(self, body):
+        self.subject = models.EmailTemplate.DFLT_SUBJECT
+        self.body = models.EmailTemplate.DFLT_BODY_FIRST
+
+    class DummyAttachment(object):
+      def __init__(self, body):
+        self.data = models.Attachment.DFLT_DATA
+        self.mime = models.Attachment.DFLT_MIME
+        self.data = models.Attachment.DFLT_FILENAME
+    
+    q = models.EmailTemplate.all().filter('account =', account)
+    q.filter('is_first_response =', True)
+    q.order('-date_created')
+    email_template = q.get()
+    if not email_template:
+      email_template = DummyEmailTemplate()
+
+    q2 = models.Attachment.all().filter('account =', account)
+    q2.order('-date_created')
+    attachment = q2.get()
+    if not attachment:
+      attachment = DummyAttachment()
+
     mail.send_mail(
-      sender=BOT_EMAIL,
-      to=lead.email,
-      reply_to=account.user.email(),
-      subject='Inquiry Response',
-      body=lead_email_body,
-      attachments=[attachment],
+      sender = BOT_EMAIL,
+      to = lead.email,
+      reply_to = account.user.email(),
+      subject = email_template.subject,
+      body = email_template.body,
+      attachments = [(attachment.filename, attachment.data)],
       )
     
-    # display confirmation page, include back link
-    # this message should also be from financial advisor
     self.response.out.write("Thank you for your inquiry.")
 
     
