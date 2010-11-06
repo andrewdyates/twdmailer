@@ -14,7 +14,7 @@
   </thead>
   <tbody>
     {% for lead in leads %}
-    <tr>
+    <tr class="cell-row" id="ColRow{{ lead.key }}">
       <td><a href="mailto:{{ lead.email }}">{{ lead.email }}</a></td>
       <td>{{ lead.date_created|date:"D d M Y" }}</td>
       <td>{{ lead.date_last_auto_ping|date:"D d M Y" }}</td>
@@ -45,7 +45,14 @@
 	  </form>
 	{% endif %}
       </td>
-      <td><a href="{{ lead.details }}">details</a></td>
+      <td><div class="show-link" id="ShowLink{{ lead.key }}"><a href="{{ lead.details }}">show details</a></div></td>
+    </tr>
+    <tr class="single-row" id="DataRow{{ lead.key }}">
+      <td colspan="6">
+	{% for item in lead.lead_data %}
+	<strong>{{ item.0 }}</strong>: {{ item.1 }}{% if not forloop.last %}, {% endif %}
+	{% endfor %}
+      </td>
     </tr>
     {% endfor %}
   </tbody>

@@ -158,6 +158,15 @@ h2 {
    color: #333333;
    background-color: #F5F7FC;
 }
+.data-table tbody .single-row td {
+   font-size: 0.9em;
+   padding-left: 14px;
+}
+/* fix this later when ready to add toggled data */
+.data-table .show-link {
+   display: none;
+   font-size: 0.9em;
+}
 .data-table tfoot {
    border-top: 1px solid #3366CC;
    background-color: #E5ECF9;

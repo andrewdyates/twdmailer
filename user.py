@@ -47,6 +47,10 @@ class LeadListing(base.BasePage):
     else:
       self.ctx['top_link'] = None
 
+    for lead in leads:
+      lead.lead_data = \
+        [(k, getattr(lead, k)) for k in lead.dynamic_properties()]
+
     self.ctx['leads'] = leads
     self.ctx['pg'] = pg
     self.ctx['set_size'] = str(Q_SIZE)

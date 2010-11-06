@@ -4,7 +4,6 @@
 import os
 
 from google.appengine.ext import db
-from google.appengine.ext.db import polymodel
 
 
 TMPL_DIR = os.path.join(os.path.dirname(__file__), "templates")
@@ -20,7 +19,7 @@ class Account(db.Model):
   is_active = db.BooleanProperty(default=True)
 
 
-class Lead(polymodel.PolyModel):
+class Lead(db.Expando):
   """Submitted user contact information."""
   PROTECTED = (
     'date_created',
