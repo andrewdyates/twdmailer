@@ -28,3 +28,13 @@ indexes:
   - name: account
   - name: date_created
     direction: desc
+
+- kind: Lead
+  properties:
+  - name: date_closed
+  - name: num_auth_ping
+
+- kind: Lead
+  properties:
+  - name: date_closed
+  - name: num_auto_ping

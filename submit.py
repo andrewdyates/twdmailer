@@ -50,7 +50,6 @@ class Main(webapp.RequestHandler):
       if key not in models.Lead.PROTECTED:
         value = u', '.join([cgi.escape(v) for v in self.request.get_all(key)])
         lead_ctx[str(key)] = value or None
-    lead_ctx['date_last_auto_ping'] = datetime.datetime.now()
     
     # note: 'email' is required property
     lead = models.Lead(account=account, **lead_ctx)
@@ -77,10 +76,12 @@ class Main(webapp.RequestHandler):
     # ===================
     mailer.mail_lead(
       account = account,
-      sender_email = mailer.BOT_EMAIL,
       to_email = lead.email,
       mail_name='first',
       )
+    lead.date_last_auto_ping = datetime.datetime.now()
+    lead.num_auto_ping += 1
+    lead.put()
     
     self.response.out.write("Thank you for your inquiry.")
 
