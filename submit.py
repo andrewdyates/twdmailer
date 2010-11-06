@@ -76,15 +76,15 @@ class Main(webapp.RequestHandler):
     # GENERATE USER EMAIL
     # ==============
     class DummyEmailTemplate(object):
-      def __init__(self, body):
+      def __init__(self):
         self.subject = models.EmailTemplate.DFLT_SUBJECT
         self.body = models.EmailTemplate.DFLT_BODY_FIRST
 
     class DummyAttachment(object):
-      def __init__(self, body):
+      def __init__(self):
         self.data = models.Attachment.DFLT_DATA
         self.mime = models.Attachment.DFLT_MIME
-        self.data = models.Attachment.DFLT_FILENAME
+        self.filename = models.Attachment.DFLT_FILENAME
     
     q = models.EmailTemplate.all().filter('account =', account)
     q.filter('is_first_response =', True)

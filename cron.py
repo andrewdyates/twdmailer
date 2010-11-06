@@ -26,7 +26,10 @@ class Default(webapp.RequestHandler):
     
     logging.info("Default Cron Job Activated.")
     # select all LeadStatus with num_auto_ping < 3 not suspended or closed
-    q = models.LeadStatus.all().
+
+    # BREAK
+    return
+    q = models.LeadStatus.all()
     q.filter("num_auth_ping <=", 3)
     q.filter("date_closed =", None)
     q.filter("date_suspend_auto_mailer =", None)

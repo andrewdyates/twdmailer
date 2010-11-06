@@ -13,7 +13,7 @@ class Main(webapp.RequestHandler):
     self.redirect(REDIRECT_URI)
     
 app = webapp.WSGIApplication([
-    (r'/?', Main),
+    (r'.*', Main),
     ], debug=False)
 
 def main():
