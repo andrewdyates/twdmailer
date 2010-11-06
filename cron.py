@@ -17,7 +17,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 import models
 
 MAX_MAIL = 3
-
+RESULT_SIZE = 100
 
 class Default(webapp.RequestHandler):
   def get(self):
@@ -25,30 +25,32 @@ class Default(webapp.RequestHandler):
     # get cursor if taskqueue
     
     logging.info("Default Cron Job Activated.")
-    # select all LeadStatus with num_auto_ping < 3 not suspended or closed
 
-    # BREAK
-    return
-    q = models.LeadStatus.all()
-    q.filter("num_auth_ping <=", 3)
+    q = models.Lead.all()
+    q.filter("num_auth_ping <=", MAX_MAIL)
     q.filter("date_closed =", None)
-    q.filter("date_suspend_auto_mailer =", None)
 
-    results = q.fetch(100)
-    
-    for r in results:
-      account = r.lead.account
-      email = r.lead.email
+    # this should probably be done in a transaction
+    leads = q.fetch(RESULT_SIZE)
+    for lead in leads:
       # send followup email
-      logging.debug("Email %s from %s" % (email, account.user))
-      # increment LeadStatus by 1
+      logging.debug("Email #%s to %s." % (lead.num_auth_ping, lead.email))
       r.num_auth_ping += 1
       r.date_last_auto_ping = datetime.datetime.now()
-    
-
-    # submit self to task queue with cursor if appropriate
+      # select template and attachments
+      q2 = models.Attachment.all().filter('account =', lead.account)
+      q2.order('-date_created')
+      attachment = q2.get()
       
+      lead.account
+    db.put(leads)
+    
+    # submit self to task queue with cursor if appropriate
+    # CALCULATE CURSOR AND SUBMIT TO TASK QUEUE
 
+
+def email_lead(lead):
+  
     
 app = webapp.WSGIApplication([
     (r'.*', Default),

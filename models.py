@@ -59,7 +59,6 @@ class EmailTemplate(db.Model):
   DFLT_BODY_AUTO_FILE = os.path.join(TMPL_DIR, "default_ping_email.txt")
   DFLT_BODY_FIRST = open(DFLT_BODY_FIRST_FILE).read()
   DFLT_BODY_AUTO = open(DFLT_BODY_AUTO_FILE).read()
-
   account = db.ReferenceProperty(Account, required=True)
   subject = db.StringProperty()
   body = db.TextProperty()

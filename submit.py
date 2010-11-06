@@ -18,11 +18,11 @@ from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import run_wsgi_app
 
 import models
+import mailer
 
 
 # WARNING: "From" email must be authorized sender
 # See: http://code.google.com/appengine/docs/python/mail/sendingmail.html
-BOT_EMAIL = "mailer@twdmailer.appspotmail.com"
 TMPL_DIR = os.path.join(os.path.dirname(__file__), "templates")
   
 
@@ -67,45 +67,19 @@ class Main(webapp.RequestHandler):
       {'lead_ctx': lead_ctx},
       )
     mail.send_mail(
-      sender=BOT_EMAIL,
+      sender=mailer.BOT_EMAIL,
       to=account.user.email(),
       subject='Mail Hard Copy to New Lead',
       body=account_email_body,
       )
-    
+
     # GENERATE USER EMAIL
-    # ==============
-    class DummyEmailTemplate(object):
-      def __init__(self):
-        self.subject = models.EmailTemplate.DFLT_SUBJECT
-        self.body = models.EmailTemplate.DFLT_BODY_FIRST
-
-    class DummyAttachment(object):
-      def __init__(self):
-        self.data = models.Attachment.DFLT_DATA
-        self.mime = models.Attachment.DFLT_MIME
-        self.filename = models.Attachment.DFLT_FILENAME
-    
-    q = models.EmailTemplate.all().filter('account =', account)
-    q.filter('is_first_response =', True)
-    q.order('-date_created')
-    email_template = q.get()
-    if not email_template:
-      email_template = DummyEmailTemplate()
-
-    q2 = models.Attachment.all().filter('account =', account)
-    q2.order('-date_created')
-    attachment = q2.get()
-    if not attachment:
-      attachment = DummyAttachment()
-
-    mail.send_mail(
-      sender = BOT_EMAIL,
-      to = lead.email,
-      reply_to = account.user.email(),
-      subject = email_template.subject,
-      body = email_template.body,
-      attachments = [(attachment.filename, attachment.data)],
+    # ===================
+    mailer.mail_lead(
+      account = account,
+      sender_email = mailer.BOT_EMAIL,
+      to_email = lead.email,
+      mail_name='first',
       )
     
     self.response.out.write("Thank you for your inquiry.")
