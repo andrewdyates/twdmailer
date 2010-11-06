@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for form in forms %}
+<h3>{{ form.title }}</h3>
+<form class="simple-form" action="" method="post">
+  <fieldset>
+    <input type="hidden" name="name" value="{{ form.name }}" />
+    <input type="hidden" name="key" value="{{ form.key }}" />
+    <table class="form-table">
+      <tbody>
+	<tr>
+	  <td><label for="subject">Subject:</label></td>
+	  <td><input class="text-field" type="text" name="subject" value="{{ form.subject }}" /></td>
+	</tr>
+	<tr>
+	  <td><label for="body">Body:</label></td>
+	  <td><textarea class="text-body" name="body">{{ form.body }}</textarea></td>
+	</tr>
+	<tr>
+	  <td colspan="2">
+	    <input type="submit" value="Update {{ form.title }}" name="action" class="button" />
+	  </td>
+	</tr>
+      </tbody>
+    </table>
+  </fieldset>
+</form>
+{% if not forloop.last %}
+<hr />
+{% endif %}
+{% endfor %}
+
+{% endblock %}

@@ -1,6 +1,7 @@
 #!/usr/bin/python2.5
 # -*- coding: utf-8 -*-
 # Copyright © 2010 Andrew D. Yates
+import cgi
 import logging
 import os
 import datetime
@@ -125,6 +126,7 @@ class EmailAttachment(base.BasePage):
 
     
 class EmailTemplates(base.BasePage):
+  
   def get(self):
     # this should be middleware in base.BasePage
     if not self.account:
@@ -133,9 +135,10 @@ class EmailTemplates(base.BasePage):
 
     class DummyEmailTemplate(object):
       def __init__(self, body):
-        self.key = ''
         self.subject = models.EmailTemplate.DFLT_SUBJECT
         self.body = body
+      def key(self):
+        return ""
 
     # first template
     q = models.EmailTemplate.all().filter('account =', self.account)
@@ -155,24 +158,49 @@ class EmailTemplates(base.BasePage):
 
     self.template = "email_templates.html"
     self.ctx['forms'] = [
-      {'title': 'First Email Template',
-       'name': 'first',
-       'key': email_template_1.key,
-       'subject': email_template_1.subject,
-       'body': email_template_1.body,
+      {
+        'title': 'First Email Template',
+        'name': 'first',
+        'key': email_template_1.key(),
+        'subject': email_template_1.subject,
+        'body': email_template_1.body,
        },
       {
         'title': 'Automatic Responder Email Template',
         'name': 'auto',
-        'key': email_template_auto.key,
+        'key': email_template_auto.key(),
         'subject': email_template_auto.subject,
         'body': email_template_auto.body,
         },
       ]
     
-
-
     self.render_page()
+
+  def post(self):
+    # this should be middleware in base.BasePage
+    if not self.account:
+      self.render_page()
+      return
+
+    key = self.request.get("key", None)
+    subject = cgi.escape(self.request.get("subject"))
+    body = cgi.escape(self.request.get("body"))
+    is_first = self.request.get("name") == 'first'
+
+    if not key:
+      template = models.EmailTemplate(account=self.account)
+    else:
+      template = models.EmailTemplate.get(key)
+      if not template:
+        logging.error("Missing template for %s." % key)
+        return
+
+    template.subject = subject
+    template.body = body
+    template.is_first_response = is_first
+
+    template.put()
+    self.redirect("")
 
     
 class FileDownload(webapp.RequestHandler):
