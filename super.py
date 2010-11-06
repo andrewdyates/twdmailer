@@ -36,12 +36,6 @@ class BootstrapSuperuser(base.BasePage):
     self.render_page()
 
     
-class ManageAccounts(base.BasePage):
-  def get(self):
-    self.content += "Stubbed. List accounts here."
-    self.render_page()
-
-    
 class TestForms(base.BasePage):
   def get(self):
     self.template = "test_form.html"
@@ -53,7 +47,6 @@ class TestForms(base.BasePage):
     
 app = webapp.WSGIApplication([
     (r'/super/bootstrap_superuser', BootstrapSuperuser),
-    (r'/super/manage_accounts', ManageAccounts),
     (r'/super/test_forms', TestForms),
     ], debug=True)
 
