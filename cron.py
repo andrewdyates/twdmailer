@@ -34,9 +34,9 @@ class Default(webapp.RequestHandler):
     leads = q.fetch(RESULT_SIZE)
     logging.info("Sending %s emails in cron." % len(leads))
     for lead in leads:
-      logging.info("Email #%s to %s." % (lead.num_auto_ping, lead.email))
       lead.num_auto_ping += 1
       lead.date_last_auto_ping = datetime.datetime.now()
+      logging.info("Email #%s to %s." % (lead.num_auto_ping, lead.email))
       mailer.mail_lead(
         account = lead.account,
         to_email = lead.email,
